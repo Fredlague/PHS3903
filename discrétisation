@@ -1,4 +1,4 @@
-def getGradient(points,var,pos,dx):
+def getGradient(points,var,posx,posy,dx):
   """
   Calcul d'un gradient de flux
   f est la matrice de champs
@@ -9,11 +9,10 @@ def getGradient(points,var,pos,dx):
   position est l'indexe de la position
   """
 
-  f_dx = (points[pos+1][var] - points[pos-1][var])/ (2*dx)
-  f_dy = (points[pos+1][var] - points[pos-1][var])/ (2*dx)
+  f_dx = (points[posx+1,posy][var] - points[posx-1,posy][var])/ (2*dx)
+  f_dy = (points[posx,posy+1][var] - points[posx,posy-1][var])/ (2*dx)
   
   return f_dx, f_dy
-  
   
   def extrapo(points,pos,var,f_dx,f_dy,dx):
     
