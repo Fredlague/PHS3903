@@ -14,6 +14,6 @@ def ini_fluide(points,speed_ini,pression_ini,rho_ini): #vitesse des fluides
             points[i].append(speed_ini[0])
             points[i].append(speed_ini[1])
         points[i].append(pressure_ini)
-        points[i].densité(rho_ini)
+        points[i].append(rho_ini)
      
     return points
