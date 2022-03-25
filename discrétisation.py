@@ -1,4 +1,4 @@
-def getGradient(points,var,posx,posy,dx):
+def getGradient(var,dx):
   """
   Calcul d'un gradient de flux
   f est la matrice de champs
@@ -9,20 +9,20 @@ def getGradient(points,var,posx,posy,dx):
   position est l'indexe de la position
   """
 
-  f_dx = ( np.roll(points,-1,axis=0) - np.roll(f,1,axis=0) ) / (2*dx)
-  f_dy = ( np.roll(points,-1,axis=1) - np.roll(f,1,axis=1) )/ (2*dx)
+  var_dx = ( np.roll(var,-1,axis=0) - np.roll(var,1,axis=0) ) / (2*dx)
+  var_dy = ( np.roll(var,-1,axis=1) - np.roll(var,1,axis=1) )/ (2*dx)
   
-  return f_dx, f_dy
+  return var_dx, var_dy
   
-  def extrapo(points,pos,var,f_dx,f_dy,dx):
+  def extrapo(var,var_dx,var_dy,dx):
     
-  f_xl = f - f_dx * dx/2
-  f_xl = np.roll(f_XL,-1,axis=0)
-  f_xr = f + f_dx * dx/2
+  var_xl = var - var_dx * dx/2
+  var_xl = np.roll(var_XL,-1,axis=0)
+  var_xr = var + var_dx * dx/2
   
-  f_yl = f - f_dy * dx/2
-  f_yl = np.roll(f_YL,-1,axis=1)
-  f_yr = f + f_dy * dx/2  
+  var_yl = var - var_dy * dx/2
+  var_yl = np.roll(var_YL,-1,axis=1)
+  var_yr = var + var_dy * dx/2  
     
 
-    return f_xl, f_xr, f_yl, f_yr
+    return var_xl, var_xr, var_yl, var_yr
