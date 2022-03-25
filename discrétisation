@@ -9,12 +9,20 @@ def getGradient(points,var,posx,posy,dx):
   position est l'indexe de la position
   """
 
-  f_dx = (points[posx+1,posy][var] - points[posx-1,posy][var])/ (2*dx)
-  f_dy = (points[posx,posy+1][var] - points[posx,posy-1][var])/ (2*dx)
+  f_dx = ( np.roll(points,-1,axis=0) - np.roll(f,1,axis=0) ) / (2*dx)
+  f_dy = ( np.roll(points,-1,axis=1) - np.roll(f,1,axis=1) )/ (2*dx)
   
   return f_dx, f_dy
   
   def extrapo(points,pos,var,f_dx,f_dy,dx):
+    
+  f_xl = f - f_dx * dx/2
+  f_xl = np.roll(f_XL,-1,axis=0)
+  f_xr = f + f_dx * dx/2
+  
+  f_yl = f - f_dy * dx/2
+  f_yl = np.roll(f_YL,-1,axis=1)
+  f_yr = f + f_dy * dx/2  
     
     f_xl= points[pos][var] - f_dx*dx/2
     f_xr = points[pos][var] + f_dx*dx/2
