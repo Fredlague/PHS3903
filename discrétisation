@@ -1,14 +1,16 @@
-def getGradient(points,position,dx):
+def getGradient(points,var,pos,dx):
   """
   Calcul d'un gradient de flux
-  f        est la matrice de champs
-  dx       est la taille de cellule
-  f_dx     est la matrice de la derivé de f dans la direction x
-  f_dy     est la matrice de la derivé de f dans la direction y
+  f est la matrice de champs
+  dx est la taille de cellule
+  f_dx est la matrice de la derivé de f dans la direction x
+  f_dy est la matrice de la derivé de f dans la direction y
+  variable indexe de la variable à dériver dans points
+  position est l'indexe de la position
   """
 
-  f_dx = (points[position+1][i] - points[position-1][i])/ (2*dx)
-  f_dy = (points[position+1][i] - points[position-1][i])/ (2*dx)
+  f_dx = (points[pos+1][var] - points[pos-1][var])/ (2*dx)
+  f_dy = (points[pos+1][var] - points[pos-1][var])/ (2*dx)
   
   return f_dx, f_dy
   
