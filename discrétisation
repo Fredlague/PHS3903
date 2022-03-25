@@ -15,11 +15,11 @@ def getGradient(points,var,pos,dx):
   return f_dx, f_dy
   
   
-  def extrapo(points,pos,var,f_dx,f_dy,dim):
+  def extrapo(points,pos,var,f_dx,f_dy,dx):
     
-    f_xl= points[pos][var] - f_dx*dim/2
-    f_xr = points[pos][var] + f_dx*dim/2
-    f_yl=  points[pos][var] - f_dy*dim/2
-    f_yr = points[pos][var] + f_dy*dim/2
+    f_xl= points[pos][var] - f_dx*dx/2
+    f_xr = points[pos][var] + f_dx*dx/2
+    f_yl=  points[pos][var] - f_dy*dx/2
+    f_yr = points[pos][var] + f_dy*dx/2
     
     return f_xl, f_xr, f_yl, f_yr
