@@ -5,7 +5,7 @@ def front_cond(points): #les max et min y = 0 non glissement
             points[i].append(0)
     return points
 
-def ini_fluide(points,speed_ini): #vitesse des fluides 
+def ini_fluide(points,speed_ini,pression_ini,rho_ini): #vitesse des fluides 
     for i in range(0,len(points)):
         if points[i][1] < 0 and len(points[i])==2: #immobile
             points[i].append(0)
@@ -13,4 +13,7 @@ def ini_fluide(points,speed_ini): #vitesse des fluides
         if points[i][1] >= 0 and len(points[i])==2: #fluide fast 
             points[i].append(speed_ini[0])
             points[i].append(speed_ini[1])
+        points[i].append(pressure_ini)
+        points[i].densité(rho_ini)
+     
     return points
