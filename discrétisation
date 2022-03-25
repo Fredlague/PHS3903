@@ -1,0 +1,16 @@
+def getGradient(f, dx):
+  """
+  Calculate the gradients of a field
+  f        is a matrix of the field
+  dx       is the cell size
+  f_dx     is a matrix of derivative of f in the x-direction
+  f_dy     is a matrix of derivative of f in the y-direction
+  """
+  # directions for np.roll() 
+  R = -1   # right
+  L = 1    # left
+  
+  f_dx = ( np.roll(f,R,axis=0) - np.roll(f,L,axis=0) ) / (2*dx)
+  f_dy = ( np.roll(f,R,axis=1) - np.roll(f,L,axis=1) ) / (2*dx)
+  
+  return f_dx, f_dy
