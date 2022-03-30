@@ -50,10 +50,10 @@ def main():
         vxprime = vx - 0.5*dt*(vx_dx*vx+vy*vx_dy+rho**(-1)*pression_dx)
         vxprime = vy - 0.5*dt*(vy_dx*vx+vy*vy_dy+rho**(-1)*pression_dy)
         pressionprime = P - 0.5*dt*(gammma*P*(vx_dx+vy_dy)+vx*pression_dy+vy*pression_dy)
-        rho_L, rho_R, rho_T, rho_B =extrapo(rhoprime, rho_dx, rho_dy, dx)
-        vx_L, vx_R, vx_T, vx_B =extrapo(vxprime, vx_dx, vx_dy, dx)
-        vy_L, vy_R, vy_T, vy_B =extrapo(vyprime, vy_dx, vy_dy, dx)
-        pression_L, pression_R, pression_T, pression_B =extrapo(pressionprime, pression_dx, pression_dy, dx)
+        rho_L, rho_R, rho_T, rho_B = extrapo(rhoprime, rho_dx, rho_dy, dx)
+        vx_L, vx_R, vx_T, vx_B = extrapo(vxprime, vx_dx, vx_dy, dx)
+        vy_L, vy_R, vy_T, vy_B = extrapo(vyprime, vy_dx, vy_dy, dx)
+        pression_L, pression_R, pression_T, pression_B = extrapo(pressionprime, pression_dx, pression_dy, dx)
         
         
         
