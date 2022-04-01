@@ -88,7 +88,7 @@ def main():
     dt = 0.1 #a verifier
     dx = 0.0082644
     tmax = 5
-    speed_ini = [1,0.2]
+    speed_ini = [1,-0.2]
     pression_ini = 1
     rho_ini = 1
     points = mesher()
