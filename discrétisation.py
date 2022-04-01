@@ -15,13 +15,13 @@ def getGradient(var,dx):
   
   def extrapo(var,var_dx,var_dy,dx):
     
-  var_xl = var - var_dx * dx/2
-  var_xl = np.roll(var_xl,-1,axis=0)
-  var_xr = var + var_dx * dx/2
+  var_xL = var - var_dx * dx/2
+  var_xL = np.roll(var_xL,-1,axis=0)
+  var_xR = var + var_dx * dx/2
   
-  var_yl = var - var_dy * dx/2
-  var_yl = np.roll(var_yl,-1,axis=1)
-  var_yr = var + var_dy * dx/2  
+  var_yT = var - var_dy * dx/2
+  var_yT = np.roll(var_yT,-1,axis=1)
+  var_yB = var + var_dy * dx/2  
     
 
-    return var_xl, var_xr, var_yl, var_yr
+    return var_xL, var_xR, var_yT, var_yB
