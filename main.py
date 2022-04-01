@@ -1,3 +1,7 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import meshzoo as mz
+
 def front_cond(points): #les max et min y = 0 non glissement
     for i in range(0,len(points)):
         if abs(points[i][1]) >= 0.495: #attention cette valeur peut changer en fonction du maillage
