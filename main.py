@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import meshzoo as mz
+import math
 
 def front_cond(points): #les max et min y = 0 non glissement
     for i in range(0,len(points)):
@@ -87,7 +88,7 @@ def main():
     dt = 0.1 #a verifier
     dx = 0.0082644
     tmax = 5
-    speed_ini = [1,0]
+    speed_ini = [1,0.2]
     pression_ini = 1
     rho_ini = 1
     points = mesher()
@@ -118,6 +119,11 @@ def main():
     P = np.resize(P , (242,121))
     P =P.tolist()
     vy = np.resize(vy , (242,121))
+    for i in range(0,len(vy)):
+        if vy != 0
+            x = (i - len(vy)/2)/50 # 50 est valeur test pour la pente de gaussienn
+            vy = vy * math.exp(-(x^2)/0.1) #impusle gauss
+            
     vy =vy.tolist()
     vx = np.resize(vx, (242,121))
     vx =vx.tolist()
