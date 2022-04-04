@@ -189,6 +189,11 @@ def main():
         momx = appFlux(momx,dt,dx, flux_momx_X, flux_momx_Y)
         momy = appFlux(momy,dt,dx, flux_momy_X, flux_momy_Y)
         NRG = appFlux(NRG,dt,dx, flux_NRG_X, flux_NRG_Y)
+        
+        rho = masse/vol
+        vx = momx/rho/vol
+        vy = momy/rho/vol
+        P = (NRG/vol - 0.5*rho*(vx**2+vy**2))*(gamma-1)
 
         t=t+1
 
