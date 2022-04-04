@@ -28,18 +28,18 @@ def ini_fluide(points,speed_ini,pression_ini,rho_ini): #vitesse des fluides
 
 def affichage(t,dimFig,dpi,pasTemps,tempsMax,rho):
     frame = 1
-     if t<tempsMax:
+    if t<tempsMax:
         fig = plt.figure(figsize=(dimFig,dimFig),dpi = dpi)
         plt.clear()
         plt.imshow(rho)
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
         ax.set_aspect('equal')
-        plt.pause(0.0001)
-
+        plt.pause(pasTemps)
     return 
 
-def calculdt(vx,vy,C_FL)
+
+def calculdt(vx,vy,C_FL):
     vmax_x = np.maximum(vx)
     vmax_y = np.maximum(vy)
     if vmax_x > vmax_y:
@@ -60,21 +60,20 @@ def getGradient(var,dx):
   var_dy est la matrice de la derivé de la variable dans la direction y
   variable indexe de la variable à dériver dans points
   """
-
-  var_dx = ( np.roll(var,-1,axis=0) - np.roll(var,1,axis=0) ) / (2*dx)
-  var_dy = ( np.roll(var,-1,axis=1) - np.roll(var,1,axis=1) )/ (2*dx)
+    var_dx = ( np.roll(var,-1,axis=0) - np.roll(var,1,axis=0) ) / (2*dx)
+    var_dy = ( np.roll(var,-1,axis=1) - np.roll(var,1,axis=1) )/ (2*dx)
   
-  return var_dx, var_dy
+    return var_dx, var_dy
   
-  def extrapo(var,var_dx,var_dy,dx):
+def extrapo(var,var_dx,var_dy,dx):
     
-  var_xL = var - var_dx * dx/2
-  var_xL = np.roll(var_xL,-1,axis=0)
-  var_xR = var + var_dx * dx/2
+    var_xL = var - var_dx * dx/2
+    var_xL = np.roll(var_xL,-1,axis=0)
+    var_xR = var + var_dx * dx/2
   
-  var_yT = var - var_dy * dx/2
-  var_yT = np.roll(var_yT,-1,axis=1)
-  var_yB = var + var_dy * dx/2  
+    var_yT = var - var_dy * dx/2
+    var_yT = np.roll(var_yT,-1,axis=1)
+    var_yB = var + var_dy * dx/2  
     
 
     return var_xL, var_xR, var_yT, var_yB
@@ -130,6 +129,8 @@ def main():
     rho = np.resize(rho , (242,121))
     rho =rho.tolist()
 
+    masse = rho *
+
     while t < tmax:
         rho_dx, rho_dy = getGradient(rho,dx)
         vx_dx, vx_dy = getGradient(vx,dx)
@@ -143,6 +144,4 @@ def main():
         vx_L, vx_R, vx_T, vx_B = extrapo(vxprime, vx_dx, vx_dy, dx)
         vy_L, vy_R, vy_T, vy_B = extrapo(vyprime, vy_dx, vy_dy, dx)
         pression_L, pression_R, pression_T, pression_B = extrapo(pressionprime, pression_dx, pression_dy, dx)
-        
-        
-        
+        masse = 
