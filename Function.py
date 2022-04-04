@@ -23,7 +23,7 @@ def ini_fluide(points,speed_ini,pression_ini,rho_ini): #vitesse des fluides
 
 def affichage(t,dimFig,dpi,pasTemps,tempsMax,rho):
     frame = 1
-     if t<tempsMax:
+    if t<tempsMax:
         fig = plt.figure(figsize=(dimFig,dimFig),dpi = dpi)
         plt.clear()
         plt.imshow(rho)
@@ -34,7 +34,7 @@ def affichage(t,dimFig,dpi,pasTemps,tempsMax,rho):
 
     return 
 
-def calculdt(vx,vy,C_FL)
+def calculdt(vx,vy,C_FL):
     vmax_x = np.maximum(vx)
     vmax_y = np.maximum(vy)
     if vmax_x > vmax_y:
@@ -56,20 +56,20 @@ def getGradient(var,dx):
   variable indexe de la variable à dériver dans points
   """
 
-  var_dx = ( np.roll(var,-1,axis=0) - np.roll(var,1,axis=0) ) / (2*dx)
-  var_dy = ( np.roll(var,-1,axis=1) - np.roll(var,1,axis=1) )/ (2*dx)
+    var_dx = ( np.roll(var,-1,axis=0) - np.roll(var,1,axis=0) ) / (2*dx)
+    var_dy = ( np.roll(var,-1,axis=1) - np.roll(var,1,axis=1) )/ (2*dx)
   
-  return var_dx, var_dy
+    return var_dx, var_dy
   
-  def extrapo(var,var_dx,var_dy,dx):
+def extrapo(var,var_dx,var_dy,dx):
     
-  var_xL = var - var_dx * dx/2
-  var_xL = np.roll(var_xL,-1,axis=0)
-  var_xR = var + var_dx * dx/2
+    var_xL = var - var_dx * dx/2
+    var_xL = np.roll(var_xL,-1,axis=0)
+    var_xR = var + var_dx * dx/2
   
-  var_yT = var - var_dy * dx/2
-  var_yT = np.roll(var_yT,-1,axis=1)
-  var_yB = var + var_dy * dx/2  
+    var_yT = var - var_dy * dx/2
+    var_yT = np.roll(var_yT,-1,axis=1)
+    var_yB = var + var_dy * dx/2  
     
 
     return var_xL, var_xR, var_yT, var_yB
@@ -96,3 +96,20 @@ def mesher(): #maillage time
     #plt.show()
     points= points.tolist() #mieux sans array
     return points
+
+def calculFlux(var, flux_X,flux_Y,dx, dt):
+
+    flux_masse = 
+    flux_en = 
+    flux_momx = 
+    flux_momy = 
+
+    return flux_masse, flux_en, flux_momx, flux_momy
+
+def applyFlux():
+    var = var - dt*dx*flux_X
+    var = var + dt*dx*np.roll(flux_X,-1,axis=0)
+    var = var - dt*dx*flux_Y
+    var = var + dt*dx*np.roll(fluxY,1,axis=1)
+    
+    return var
