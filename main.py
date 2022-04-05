@@ -16,11 +16,13 @@ def ini_fluide(points,speed_ini,pression_ini,rho_ini): #vitesse des fluides
         if points[i][1] < 0 and len(points[i])==2: #immobile
             points[i].append(0)
             points[i].append(0)
+            points[i].append(pression_ini)
+            points[i].append(rho_ini[0])
         if points[i][1] >= 0 and len(points[i])==2: #fluide fast 
             points[i].append(speed_ini[0])
             points[i].append(speed_ini[1])
-        points[i].append(pression_ini)
-        points[i].append(rho_ini)
+            points[i].append(pression_ini)
+            points[i].append(rho_ini[1])
      
     return points
 # Affichage graphique (densité)
@@ -42,8 +44,8 @@ def affichage(t,dimFig,dpi,pasTemps,tempsMax,rho):
 
 
 def calculdt(vx,vy,C_FL,dx):
-    vmax_x = np.maximum(vx)
-    vmax_y = np.maximum(vy)
+    vmax_x = np.max(vx)
+    vmax_y = np.max(vy)
     if vmax_x > vmax_y:
         dt = C_FL*dx/vmax_x
     if vmax_y > vmax_y:
@@ -86,11 +88,21 @@ def calculFlux(rho_L,rho_R,vx_L,vx_R,vy_L,vy_R,pression_L,pression_R,gamma):
     flux_momx = (0.5*(rho_L*vx_L+rho_R*vx_R))**2/(0.5*(rho_L +rho_R))+(gamma-1)*(0.5*(NRG_L+NRG_R)-0.5*( (0.5*(rho_L*vx_L+rho_R*vx_R))**2+(0.5*(rho_L*vy_L+rho_R*vy_R))**2)/(0.5*(rho_L + rho_R)))
     flux_momy = 0.5*(rho_L*vx_L+rho_R*vx_R)*0.5*(rho_L*vy_L+rho_R*vy_R)/(0.5*(rho_L +rho_R))
     flux_NRG = 0.5*(NRG_L+NRG_R + ((gamma-1)*(0.5*(NRG_L+NRG_R)-0.5*( (0.5*(rho_L*vx_L+rho_R*vx_R))**2+(0.5*(rho_L*vy_L+rho_R*vy_R))**2)/(0.5*(rho_L + rho_R)))))* 0.5*(rho_L*vx_L+rho_R*vx_R)/(0.5*(rho_L +rho_R))
-    return flux_masse, flux_NRG, flux_momx, flux_momy
+    
+    C_L = np.sqrt(gamma*pression_L/rho_L) + np.abs(vx_L)
+    C_R = np.sqrt(gamma*pression_R/rho_R) + np.abs(vx_R)
+    C = np.maximum( C_L, C_R )
+    
+    flux_masse   -= C * 0.5 * (rho_L - rho_R)
+    flux_momx   -= C * 0.5 * (rho_L * vx_L - rho_R * vx_R)
+    flux_momy   -= C * 0.5 * (rho_L * vy_L - rho_R * vy_R)
+    flux_NRG -= C * 0.5 * ( NRG_L - NRG_R )
+    
+    return flux_masse,flux_momx, flux_momy,flux_NRG
 
 def appFlux(var,dt,dx,flux_var_X,flux_var_Y):
     var = var - dt*dx*flux_var_X
-    var = var + dt*dx*np.roll(flux_var_X,-1,axis=0)
+    var = var + dt*dx*np.roll(flux_var_X,1,axis=0)
     var = var - dt*dx*flux_var_Y
     var = var + dt*dx*np.roll(flux_var_Y,1,axis=1)
     
@@ -117,18 +129,29 @@ def mesher(): #maillage time
     return points
 
 def main():
-    gamma = 5/3 
-    t=0
-    dt = 0.1 #a verifier
-    dx = 0.0082644
-    tmax = 5
-    speed_ini = [1,-0.2]
-    pression_ini = 1
-    rho_ini = 1
-    points = mesher()
-    points = front_cond(points)
-    points = ini_fluide(points,speed_ini,pression_ini,rho_ini)
-    masse = rho_ini*dx**2
+    # Simulation parameters
+    N                      = 200 # resolution
+    boxsize                = 1.
+    gamma                  = 5/3 # ideal gas gamma
+    t                      = 0
+    tmax                   = 0.5
+    
+    # Mesh
+    dx = boxsize / N
+    vol = dx**2
+    xlin = np.linspace(0.5*dx, boxsize-0.5*dx, N)
+    Y, X = np.meshgrid( xlin, xlin )
+    sigma = 0.05/np.sqrt(2)
+    rho = 1. + (Y < 0.5)
+    vx = -0.5 + (Y<0.5)
+    vy = 0.2*np.sin(4*np.pi*X) * ( np.exp(-(Y-0.5)**2/(2 * sigma**2)) + np.exp(-(Y-0.5)**2/(2*sigma**2)) )
+    P = 2.5 * np.ones(X.shape)
+    masse   = rho * vol
+    momx   = rho * vx * vol
+    momy   = rho * vy * vol
+    NRG = (P/(gamma-1) + 0.5*rho*(vx**2+vy**2))*vol
+    
+    '''
     momx=[]
     momy=[]
     NRG=[]
@@ -136,20 +159,12 @@ def main():
     vy =[]
     vx = []
     rho = []
+    
     for i in range(0,len(points)):
-        momx.append(rho_ini*points[i][2]*dx**2)
-        momy.append(rho_ini*points[i][3]*dx**2) 
-        NRG.append((pression_ini/(gamma-1)+0.5*rho_ini*(points[i][2]+points[i][3]**2))*dx**2)
         vx.append(points[i][2])
         vy.append(points[i][3])
         P.append(points[i][4])
         rho.append(points[i][5])
-    momx = np.resize(momx , (242,121))
-    #momx =momx.tolist()
-    momy = np.resize(momy , (242,121))
-    #momy =momy.tolist()
-    NRG = np.resize(NRG , (242,121))
-    #NRG =NRG.tolist()
     P = np.resize(P , (242,121))
     #P =P.tolist()
     vy = np.resize(vy , (242,121))
@@ -163,10 +178,23 @@ def main():
     #vx =vx.tolist()
     rho = np.resize(rho , (242,121))
     #rho =rho.tolist()
-
+    
+    for i in range(0,len(points)):
+        momx.append(rho*points[i][2]*dx**2)
+        momy.append(rho*points[i][3]*dx**2) 
+        NRG.append((P/(gamma-1)+0.5*rho*(points[i][2]+points[i][3]**2))*dx**2)
+    momx = np.resize(momx , (242,121))
+    #momx =momx.tolist()
+    momy = np.resize(momy , (242,121))
+    #momy =momy.tolist()
+    NRG = np.resize(NRG , (242,121))
+    #NRG =NRG.tolist()
+   '''
 
 
     while t < tmax:
+        dt = 0.4 * np.min( dx / (np.sqrt( gamma*P/rho ) + np.sqrt(vx**2+vy**2)) )
+
         rho_dx, rho_dy = getGradient(rho,dx)
         vx_dx, vx_dy = getGradient(vx,dx)
         vy_dx, vy_dy = getGradient(vy,dx)
@@ -175,7 +203,7 @@ def main():
         rhoprime = rho - 0.5*dt*(rho_dx*vx+rho*vx_dx+rho_dy*vy+rho*vy_dy)
         vxprime = vx - 0.5*dt*(vx_dx*vx+vy*vx_dy+(1/rho)*pression_dx)
         vyprime = vy - 0.5*dt*(vy_dx*vx+vy*vy_dy+(1/rho)*pression_dy)
-        pressionprime = P - 0.5*dt*(gamma*P*(vx_dx+vy_dy)+vx*pression_dy+vy*pression_dy)
+        pressionprime = P - 0.5*dt*(gamma*P*(vx_dx+vy_dy)+vx*pression_dx+vy*pression_dy)
         
         rho_L, rho_R, rho_T, rho_B = extrapo(rhoprime, rho_dx, rho_dy, dx)
         vx_L, vx_R, vx_T, vx_B = extrapo(vxprime, vx_dx, vx_dy, dx)
@@ -183,19 +211,19 @@ def main():
         pression_L, pression_R, pression_T, pression_B = extrapo(pressionprime, pression_dx, pression_dy, dx)
 
         flux_masse_X, flux_momx_X, flux_momy_X, flux_NRG_X = calculFlux(rho_L,rho_R,vx_L,vx_R,vy_L,vy_R,pression_L, pression_R,gamma)
-        flux_masse_Y, flux_momx_Y, flux_momy_Y, flux_NRG_Y = calculFlux(rho_T,rho_B,vx_T,vx_B,vy_T,vy_B,pression_T, pression_B,gamma)
+        flux_masse_Y, flux_momy_Y, flux_momx_Y, flux_NRG_Y = calculFlux(rho_T,rho_B,vy_T,vy_B,vx_T,vx_B,pression_T, pression_B,gamma)
 
         masse = appFlux(masse,dt,dx, flux_masse_X, flux_masse_Y)
         momx = appFlux(momx,dt,dx, flux_momx_X, flux_momx_Y)
         momy = appFlux(momy,dt,dx, flux_momy_X, flux_momy_Y)
         NRG = appFlux(NRG,dt,dx, flux_NRG_X, flux_NRG_Y)
-        
+
         rho = masse/vol
-        vx = momx/rho/vol
+        vx =momx/rho/vol
         vy = momy/rho/vol
         P = (NRG/vol - 0.5*rho*(vx**2+vy**2))*(gamma-1)
 
-        t=t+1
+        t=t+dt
 
 
         plt.cla()
@@ -207,7 +235,7 @@ def main():
         ax.get_yaxis().set_visible(False)	
         ax.set_aspect('equal')	
         plt.pause(0.001)
-
+        print(t)
     plt.savefig('finitevolume.png',dpi=240)
     plt.show()
 
