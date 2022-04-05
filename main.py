@@ -142,14 +142,20 @@ def main():
     xlin = np.linspace(0.5*dx, boxsize-0.5*dx, N)
     Y, X = np.meshgrid( xlin, xlin )
     sigma = 0.05/np.sqrt(2)
-    rho = 1. + (Y < 0.5)
-    vx = -0.5 + (Y<0.5)
-    vy = 0.2*np.sin(4*np.pi*X) * ( np.exp(-(Y-0.5)**2/(2 * sigma**2)) + np.exp(-(Y-0.5)**2/(2*sigma**2)) )
+    rho = 1. + (Y < boxsize/2)
+    vx = -0.5 + (Y<boxsize/2)
+    vy = 0.2*np.sin(4*np.pi*X) * ( np.exp(-(Y-boxsize/2)**2/(2 * sigma**2)) + np.exp(-(Y-boxsize/2)**2/(2*sigma**2)) )
     P = 2.5 * np.ones(X.shape)
     masse   = rho * vol
     momx   = rho * vx * vol
     momy   = rho * vy * vol
     NRG = (P/(gamma-1) + 0.5*rho*(vx**2+vy**2))*vol
+    
+    for i in range(0,len(vx)):
+        vx[0][i] = 0
+        vy[0][i] = 0
+        vx[-1][i] = 0
+        vy[-1][i] = 0
     
     '''
     momx=[]
