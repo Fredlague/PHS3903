@@ -1,7 +1,7 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 import meshzoo as mz
+import os
 import math
 
 def front_cond(points): #les max et min y = 0 non glissement
@@ -134,7 +134,7 @@ def main():
     boxsize                = 1.
     gamma                  = 5/3 # ideal gas gamma
     t                      = 0
-    tmax                   = 0.5
+    tmax                   = 0.01
     
     # Mesh
     dx = boxsize / N
@@ -150,6 +150,10 @@ def main():
     momx   = rho * vx * vol
     momy   = rho * vy * vol
     NRG = (P/(gamma-1) + 0.5*rho*(vx**2+vy**2))*vol
+    imagesVid = []
+    testNum= 1
+    testfold = '/test' + str(testNum)
+    os.mkdir('.'+testfold)
     
     for i in range(0,len(vx)):
         vx[0][i] = 0
@@ -229,7 +233,7 @@ def main():
         vy = momy/rho/vol
         P = (NRG/vol - 0.5*rho*(vx**2+vy**2))*(gamma-1)
 
-        t=t+dt
+        
 
 
         plt.cla()
@@ -242,7 +246,10 @@ def main():
         ax.set_aspect('equal')	
         plt.pause(0.001)
         print(t)
-    plt.savefig('finitevolume.png',dpi=240)
+        t=t+dt
+        tstring = str(t)
+        plt.savefig('.'+ testfold+'/' + tstring +'.png')
+    
     plt.show()
 
 
