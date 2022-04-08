@@ -134,7 +134,7 @@ def main():
     boxsize                = 1.
     gamma                  = 5/3 # ideal gas gamma
     t                      = 0
-    tmax                   = 0.01
+    tmax                   = 5
     
     # Mesh
     dx = boxsize / N
@@ -142,7 +142,7 @@ def main():
     xlin = np.linspace(0.5*dx, boxsize-0.5*dx, N)
     Y, X = np.meshgrid( xlin, xlin )
     sigma = 0.05/np.sqrt(2)
-    rho = 1. + (Y < boxsize/2)
+    rho = 1. + 2*(Y < boxsize/2)
     vx = -0.5 + (Y<boxsize/2)
     vy = 0.2*np.sin(4*np.pi*X) * ( np.exp(-(Y-boxsize/2)**2/(2 * sigma**2)) + np.exp(-(Y-boxsize/2)**2/(2*sigma**2)) )
     P = 2.5 * np.ones(X.shape)
@@ -152,8 +152,10 @@ def main():
     NRG = (P/(gamma-1) + 0.5*rho*(vx**2+vy**2))*vol
     imagesVid = []
     testNum= 1
-    testfold = '/test' + str(testNum)
-    os.mkdir('.'+testfold)
+    save = False
+    if save == True:
+        testfold = '/test' + str(testNum)
+        os.mkdir('.'+testfold)
     
     for i in range(0,len(vx)):
         vx[0][i] = 0
@@ -245,12 +247,17 @@ def main():
         ax.get_yaxis().set_visible(False)	
         ax.set_aspect('equal')	
         plt.pause(0.001)
-        print(t)
+        print(dt)
+        #deltaT.append(dt)
         t=t+dt
         tstring = str(t)
-        plt.savefig('.'+ testfold+'/' + tstring +'.png')
+        if save == True:
+            plt.savefig('.'+ testfold+'/' + tstring +'.png')
     
     plt.show()
+    
+    #plt.figure(2)
+
 
 
 main()
