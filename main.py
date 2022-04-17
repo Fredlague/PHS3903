@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import meshzoo as mz
 import os
 import math
@@ -29,18 +30,7 @@ def ini_fluide(points,speed_ini,pression_ini,rho_ini): #vitesse des fluides
 
 #Variables pour l'affichage
 
-def affichage(t,dimFig,dpi,pasTemps,tempsMax,rho):
-    frame = 1
-    if t<tempsMax:
-        fig = plt.figure(figsize=(dimFig,dimFig),dpi = dpi)
-        plt.clear()
-        plt.imshow(rho)
-        ax = plt.gca()
-        ax.get_xaxis().set_visible(False)
-        ax.get_yaxis().set_visible(False)
-        ax.set_aspect('equal')
-        plt.pause(pasTemps)
-    return 
+    
 
 
 def calculdt(vx,vy,C_FL,dx):
@@ -128,13 +118,13 @@ def mesher(): #maillage time
     points= points.tolist() #mieux sans array
     return points
 
-def main():
+def main(Res,iter):
     # Simulation parameters
-    N                      = 200 # resolution
+    N                      = Res # resolution
     boxsize                = 1.
     gamma                  = 5/3 # ideal gas gamma
     t                      = 0
-    tmax                   = 5
+    tmax                   = 0.01
     
     # Mesh
     dx = boxsize / N
@@ -150,9 +140,13 @@ def main():
     momx   = rho * vx * vol
     momy   = rho * vy * vol
     NRG = (P/(gamma-1) + 0.5*rho*(vx**2+vy**2))*vol
+    global imagesVid
     imagesVid = []
-    testNum= 1
+    global testNum
+    testNum= iter
     save = False
+
+    
     if save == True:
         testfold = '/test' + str(testNum)
         os.mkdir('.'+testfold)
@@ -238,26 +232,36 @@ def main():
         
 
 
-        plt.cla()
-        plt.imshow(rho.T)
+        #plt.cla()
+        
+        im = plt.imshow(rho.T,animated=True)
         plt.clim(0.8, 2.2)
-        ax = plt.gca()
-        ax.invert_yaxis()
-        ax.get_xaxis().set_visible(False)
-        ax.get_yaxis().set_visible(False)	
-        ax.set_aspect('equal')	
-        plt.pause(0.001)
         print(dt)
         #deltaT.append(dt)
+        imagesVid.append([im])
         t=t+dt
         tstring = str(t)
         if save == True:
             plt.savefig('.'+ testfold+'/' + tstring +'.png')
+        
     
-    plt.show()
-    
-    #plt.figure(2)
+    return imagesVid
+
+Nrange = [100, 200, 400]
+i = 1
+
+for N in Nrange:
+    fig = plt.figure()
+    ax = plt.gca()
+    ax.invert_yaxis()
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)	
+    ax.set_aspect('equal')
+    main(N,i)
+    ani = animation.ArtistAnimation(fig, imagesVid, interval=50, blit=True,
+                                repeat_delay=1000)
 
 
 
-main()
+    ani.save('video'+str(testNum)+'.gif')
+    i += 1
