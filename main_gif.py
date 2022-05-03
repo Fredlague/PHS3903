@@ -148,10 +148,12 @@ def main(Res,iter):
     '''
     global testNum
     testNum= iter
-    save = True
+    global saveGif
+    saveGif = False
+    saveRho = True
 
     
-    if save == True:
+    if saveGif == True or saveRho == True:
         global testfold
         testfold = 'test' + str(testNum)
         os.mkdir('./'+testfold)
@@ -247,24 +249,27 @@ def main(Res,iter):
         t=t+dt
         tstring = str(t)
         print(t)
-        if save == True:
+        if saveGif == True:
             plt.savefig('./'+ testfold+'/' + tstring +'.png')
+        if saveRho == True:
+            np.save('./' + testfold +'/' + tstring + '.npy', rho)
         
     
     return 
 
-main(1000,4)
+main(200,5)
 
-images = []
-images_list = os.listdir(testfold)
-images_num = [x.replace('.png','') for x in images_list]
-images_num = [float(image) for image in images_num]
-images_num.sort()
-images_list = [str(i)+'.png' for i in images_num]
-for filename in images_list:
-    img = imageio.imread(testfold+ '/'+filename)
-    images.append(img)
-imageio.mimsave('video'+str(testNum)+'.gif', images)
+if saveGif == True:
+    images = []
+    images_list = os.listdir(testfold)
+    images_num = [x.replace('.png','') for x in images_list]
+    images_num = [float(image) for image in images_num]
+    images_num.sort()
+    images_list = [str(i)+'.png' for i in images_num]
+    for filename in images_list:
+        img = imageio.imread(testfold+ '/'+filename)
+        images.append(img)
+    imageio.mimsave('video'+str(testNum)+'.gif', images)
 
 '''
 fig = plt.figure()
